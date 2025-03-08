@@ -26,3 +26,19 @@ class Market(ABC):
             NotImplementedError: If the method is not implemented by a concrete subclass.
         """
         raise NotImplementedError("Subclasses must implement the insert_cep method")
+
+    @abstractmethod
+    def browse_categories(self) -> None:
+        """
+        Abstract method to browse and extract product categories from the market's website.
+
+        This method should be implemented by concrete market classes to provide the specific
+        logic for browsing and retrieving the categories of products available on the market's
+        website.
+
+        Raises:
+            NotImplementedError: If the method is not implemented by a concrete subclass.
+        """
+        raise NotImplementedError(
+            "Subclasses must implement the browse_categories method"
+        )
