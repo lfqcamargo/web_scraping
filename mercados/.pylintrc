@@ -442,6 +442,7 @@ disable=raw-checker-failed,
         C0114, #missing-module-docstring
         R0903, #too-few-public-methods
         C0200, #consider-using-enumerate
+        C0209, #consider-using-f-string
         
 
 

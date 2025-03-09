@@ -1,6 +1,3 @@
-from src.entities.central import Central
+from src.main.composer.central_composer import central
 
-
-
-central = Central()
 central.execute()

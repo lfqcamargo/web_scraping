@@ -1,3 +1,4 @@
+from datetime import date
 import time
 import selenium
 import selenium.common
@@ -7,7 +8,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 
-from src.entities.interfaces.market import Market
+from src.main.entities.interfaces.market import Market
+from src.models.interfaces.products_repository_interface import (
+    ProductsRepositoryInterface,
+)
 
 
 class Central(Market):
@@ -22,8 +26,9 @@ class Central(Market):
         driver (webdriver.Chrome): Selenium WebDriver instance used to interact with the website.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, products_repository: ProductsRepositoryInterface) -> None:
         self.__driver = webdriver.Chrome()
+        self.__products_repository = products_repository
 
     def execute(self) -> None:
         self.insert_cep()
@@ -79,7 +84,7 @@ class Central(Market):
             if button_select_cep is not None or cont > 3:
                 break
 
-    def browse_categories(self):
+    def browse_categories(self) -> None:
         list_categories = self.__driver.find_elements(By.CLASS_NAME, "featured")
 
         for category in list_categories:
@@ -114,10 +119,10 @@ class Central(Market):
                     self.browse_products()
                     self.__driver.back()
                     time.sleep(2)
-                except Exception as e:
-                    pass
+                except selenium.common.exceptions.TimeoutException as e:
+                    print(e)
 
-    def browse_products(self):
+    def browse_products(self) -> None:
         try:
             list_products = self.__driver.find_elements(
                 By.CLASS_NAME,
@@ -143,9 +148,42 @@ class Central(Market):
                 body = self.__driver.find_element(By.TAG_NAME, "body")
                 actions.move_to_element(body).perform()
                 actions.move_to_element(product).click().perform()
-                time.sleep(2)
+                time.sleep(3)
+                self.save_product()
                 self.__driver.back()
                 time.sleep(2)
-        except Exception as e:
+        except selenium.common.exceptions.TimeoutException as e:
             print(e)
-            pass
+
+    def save_product(self) -> None:
+        try:
+            nav_category_product = WebDriverWait(self.__driver, 5).until(
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, "vip-tabs-bar.ng-star-inserted")
+                )
+            )
+
+            category_product = nav_category_product.find_element(
+                By.CLASS_NAME, "ng-star-inserted"
+            )
+            print(category_product.text, " - Category")
+
+            title_product = self.__driver.find_element(By.TAG_NAME, "h3")
+            print(title_product.text, " - Ttitle")
+
+            price_product = self.__driver.find_element(
+                By.CLASS_NAME, "info-price.ng-star-inserted"
+            )
+            print(price_product.text)
+
+            product = {
+                "date": date.today().strftime("%d-%m-%Y"),
+                "product": title_product.text,
+                "category": category_product.text,
+                "price": price_product.text,
+            }
+
+            self.__products_repository.save(product)
+
+        except Exception:
+            return None
