@@ -3,6 +3,13 @@ from ..settings.connection_handler import DBConnectionHandler
 
 
 class LogsRepository(LogsRepositoryInterface):
+    """
+    Concrete implementation of the LogsRepositoryInterface.
+
+    This class handles the interaction with the database for saving logs.
+    It uses the provided DBConnectionHandler to perform the necessary operations.
+    """
+
     def __init__(self, db_connection: DBConnectionHandler) -> None:
         """
         Initializes the LogsRepository with a database connection.

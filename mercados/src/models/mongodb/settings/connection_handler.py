@@ -49,4 +49,4 @@ class DBConnectionHandler:
 
 db_connection_handler = DBConnectionHandler()
 db_connection_handler.connect_to_db()
-db_connection = db_connection_handler.get_db_connection
+db_connection = db_connection_handler.get_db_connection()
