@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from src.main.entities.log import Log
 
 
 class LogsRepositoryInterface(ABC):
@@ -10,7 +11,7 @@ class LogsRepositoryInterface(ABC):
     """
 
     @abstractmethod
-    def save(self, log: dict) -> None:
+    def save(self, log: Log) -> None:
         """
         Saves a log entry into the database.
 
