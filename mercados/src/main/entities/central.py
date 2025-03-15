@@ -48,7 +48,10 @@ class Central:
             for category in list_categories:
                 try:
                     list_sub_categories = self.get_sub_categories(category)
-                    self.browse_sub_categories_and_products(list_sub_categories)
+                    total_item_per_category = self.browse_sub_categories_and_products(
+                        list_sub_categories
+                    )
+                    self.__log.total_item_per_category = {}
 
                 except Exception:
                     date_time = datetime.now()
@@ -137,8 +140,9 @@ class Central:
 
     def browse_sub_categories_and_products(
         self, list_sub_categories: List[WebElement]
-    ) -> None:
+    ) -> int:
         try:
+            total_item_per_category = 0
             for index in range(len(list_sub_categories)):
                 try:
                     list_sub_categories = self.__driver.find_elements(
@@ -161,7 +165,7 @@ class Central:
                     self.browse_products()
                     self.__driver.back()
                     time.sleep(2)
-                    total_item_process += 1
+                    total_item_per_category += 1
                 except Exception:
                     continue
         except Exception:
@@ -170,7 +174,7 @@ class Central:
             log_error = LogError(date_time, message, Exception)
             self.__log.logs_error.append(log_error.to_dict())
             return None
-        return None
+        return total_item_per_category
 
     def browse_products(self) -> None:
         try:
